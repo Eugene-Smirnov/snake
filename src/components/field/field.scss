@@ -1,0 +1,12 @@
+@import '../../styles/variables';
+
+.field {
+  &__wrapper {
+    border: 3px solid $contrast-bg-color;
+  }
+  display: flex;
+  flex-direction: column;
+  width: 80vmin;
+  height: 80vmin;
+  margin: 4px;
+}
