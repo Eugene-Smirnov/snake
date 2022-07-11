@@ -1,3 +1,4 @@
-$bg-color: hsl(110, 25%, 65%);
-$dark-color: hsl(110, 2%, 20%);
-$contrast-bg-color: hsl(110, 20%, 55%);
+$bg-color: hsl(var(--main-color), 25%, 65%);
+$contrast-bg-color: hsl(var(--main-color), 20%, 55%);
+$dark-color: hsl(var(--main-color), 5%, 25%);
+$red-color: hsl(355, 70%, 45%);
