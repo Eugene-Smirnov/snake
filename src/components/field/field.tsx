@@ -10,6 +10,8 @@ import './field.scss';
 
 export const FIELD_SIZE = 20;
 
+// type FieldProps = {};
+
 export const Field: FC = () => {
   const dispatch = useDispatch();
   const [matrix, setMatrix] = useState<FieldModel>([]);
@@ -23,7 +25,6 @@ export const Field: FC = () => {
   const isStarted = useSelector<RootState, boolean>(({ game: { intervalID } }) => !!intervalID);
 
   const fillMatrix = (snakeBody: SnakeSegment[]) => {
-    console.log('!!!!');
     const rawMatrix: FieldModel = [];
     for (let i = 0; i < FIELD_SIZE; i++) {
       const row: RowModel = [];
