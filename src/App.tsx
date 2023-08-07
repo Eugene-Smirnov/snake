@@ -1,16 +1,16 @@
 import React from 'react';
 import './App.scss';
-import { Field } from './components/field/field';
-import moveService from './services/move.service';
-import { useDispatch } from 'react-redux';
+import { FieldComponent } from './components/field/field.component';
+import eventsToActionsService from './services/events-to-action.service';
+import { useAppDispatch } from './store';
 
 const KEYDOWN_GLOBAL_LISTENER_KEY = 'evs-snake-keydown-listener';
 
 function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   function keyDownHandler(this: Document, event: KeyboardEvent): void {
-    const action = moveService.getKeyPressAction(event.code);
+    const action = eventsToActionsService.getKeyPressAction(event.code);
     if (action) {
       dispatch(action());
     }
@@ -30,7 +30,7 @@ function App() {
       <header className="App-header">
         <h2>SNAKE</h2>
       </header>
-      <Field></Field>
+      <FieldComponent></FieldComponent>
     </div>
   );
 }

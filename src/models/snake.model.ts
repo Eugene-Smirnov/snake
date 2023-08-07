@@ -14,10 +14,11 @@ export interface SnakeModel {
 
 export class Snake implements SnakeModel {
   body: SnakeSegment[] = [];
-  segmentsToGrow: 0;
+  segmentsToGrow = 0;
 
-  constructor() {
-    this.body = this.initBody();
+  constructor(body?: SnakeSegment[], segmentsToGrow?: number) {
+    this.body = body || this.initBody();
+    this.segmentsToGrow = segmentsToGrow || 0;
   }
 
   initBody() {

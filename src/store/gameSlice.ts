@@ -1,86 +1,85 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FIELD_SIZE } from '../components/field/field';
-import Directions from '../models/directions';
+import { DIRECTION_VALUES, TDirection } from '../models/directions';
 import { Snake, SnakeModel } from '../models/snake.model';
+import { AppleSquareModel, FieldModel, SQUARE_VALUES } from '../models/field.model';
+import { getField } from '../shared/utils';
+import { FIELD_SIZE } from '../shared/variables';
 
 export interface GameSliceState {
   intervalID: number | null;
-  direction: Directions;
+  direction: TDirection;
   snake: SnakeModel;
+  apple: AppleSquareModel;
+  field: FieldModel;
 }
+
+const INITIAL_SNAKE = new Snake();
+const INITIAL_APPLE: AppleSquareModel = {
+  x: FIELD_SIZE - 2,
+  y: FIELD_SIZE - 2,
+  value: SQUARE_VALUES.APPLE,
+};
+const INITIAL_FIELD = getField(INITIAL_SNAKE.body, INITIAL_APPLE);
 
 const GAME_INITIAL_STATE: GameSliceState = {
   intervalID: null,
-  direction: 'right',
-  snake: new Snake(),
+  direction: DIRECTION_VALUES.RIGHT,
+  snake: INITIAL_SNAKE,
+  apple: INITIAL_APPLE,
+  field: INITIAL_FIELD,
 };
 
 export const gameSlice = createSlice({
   name: 'game',
   initialState: GAME_INITIAL_STATE,
   reducers: {
-    setIntervalID: (state, action: PayloadAction<number>) => {
+    start: () => {},
+    setIntervalID: (state, action: PayloadAction<number | null>) => {
       state.intervalID = action.payload;
     },
-    clearIntervalID: (state) => {
+    stop: (state) => {
+      if (state.intervalID) {
+        window.clearInterval(state.intervalID);
+      }
+
       state.intervalID = null;
     },
-    move: (state) => {
-      const snakeBody = state.snake.body;
-      const snakeLength = snakeBody.length;
-      const snakeHead = snakeBody[snakeLength - 1];
-      let headX = snakeHead.x;
-      let headY = snakeHead.y;
-      switch (state.direction) {
-        case 'up':
-          headY = snakeHead.y - 1 < 0 ? FIELD_SIZE - 1 : snakeHead.y - 1;
-          break;
-        case 'right':
-          headX = snakeHead.x + 1 === FIELD_SIZE ? 0 : snakeHead.x + 1;
-          break;
-        case 'down':
-          headY = snakeHead.y + 1 === FIELD_SIZE ? 0 : snakeHead.y + 1;
-          break;
-        case 'left':
-          headX = snakeHead.x - 1 < 0 ? FIELD_SIZE - 1 : snakeHead.x - 1;
-          break;
-      }
-
-      if (state.snake.segmentsToGrow > 0) {
-        state.snake.segmentsToGrow = state.snake.segmentsToGrow - 1;
-      } else {
-        snakeBody.shift();
-      }
-
-      snakeBody.push({ x: headX, y: headY });
+    toggleGame: () => {},
+    setField: (state, action: PayloadAction<FieldModel>) => {
+      state.field = action.payload;
     },
+    setSnake: (state, action: PayloadAction<SnakeModel>) => {
+      state.snake = action.payload;
+    },
+    move: () => {},
     up: (state) => {
-      if (state.direction === 'up' || state.direction === 'down') {
+      if (state.direction === DIRECTION_VALUES.UP || state.direction === DIRECTION_VALUES.DOWN) {
         return;
       }
-      state.direction = 'up';
+      state.direction = DIRECTION_VALUES.UP;
     },
     right: (state) => {
-      if (state.direction === 'right' || state.direction === 'left') {
+      if (state.direction === DIRECTION_VALUES.RIGHT || state.direction === DIRECTION_VALUES.LEFT) {
         return;
       }
-      state.direction = 'right';
+      state.direction = DIRECTION_VALUES.RIGHT;
     },
     down: (state) => {
-      if (state.direction === 'down' || state.direction === 'up') {
+      if (state.direction === DIRECTION_VALUES.DOWN || state.direction === DIRECTION_VALUES.UP) {
         return;
       }
-      state.direction = 'down';
+      state.direction = DIRECTION_VALUES.DOWN;
     },
     left: (state) => {
-      if (state.direction === 'left' || state.direction === 'right') {
+      if (state.direction === DIRECTION_VALUES.LEFT || state.direction === DIRECTION_VALUES.RIGHT) {
         return;
       }
-      state.direction = 'left';
+      state.direction = DIRECTION_VALUES.LEFT;
     },
   },
 });
 
-export const { setIntervalID, clearIntervalID, move, up, right, down, left } = gameSlice.actions;
+export const { start, setIntervalID, stop, toggleGame, setField, setSnake, move, up, right, down, left } =
+  gameSlice.actions;
 
 export default gameSlice.reducer;
