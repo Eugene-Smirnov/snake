@@ -9,6 +9,7 @@ import { IAppleSquare } from '../models/apple.interface';
 export interface GameSliceState {
   intervalID: number | null;
   direction: TDirection;
+  prevMoveDirection: TDirection;
   snake: ISnake;
   apple: IAppleSquare;
   field: IField;
@@ -28,6 +29,7 @@ const INITIAL_FIELD = getField(INITIAL_SNAKE.body, INITIAL_APPLE);
 const GAME_INITIAL_STATE: GameSliceState = {
   intervalID: null,
   direction: DIRECTION_VALUES.RIGHT,
+  prevMoveDirection: DIRECTION_VALUES.RIGHT,
   snake: INITIAL_SNAKE,
   apple: INITIAL_APPLE,
   field: INITIAL_FIELD,
@@ -60,33 +62,49 @@ export const gameSlice = createSlice({
     },
     move: () => {},
     up: (state) => {
-      if (state.direction === DIRECTION_VALUES.UP || state.direction === DIRECTION_VALUES.DOWN) {
+      if (state.prevMoveDirection === DIRECTION_VALUES.UP || state.prevMoveDirection === DIRECTION_VALUES.DOWN) {
         return;
       }
       state.direction = DIRECTION_VALUES.UP;
     },
     right: (state) => {
-      if (state.direction === DIRECTION_VALUES.RIGHT || state.direction === DIRECTION_VALUES.LEFT) {
+      if (state.prevMoveDirection === DIRECTION_VALUES.RIGHT || state.prevMoveDirection === DIRECTION_VALUES.LEFT) {
         return;
       }
       state.direction = DIRECTION_VALUES.RIGHT;
     },
     down: (state) => {
-      if (state.direction === DIRECTION_VALUES.DOWN || state.direction === DIRECTION_VALUES.UP) {
+      if (state.prevMoveDirection === DIRECTION_VALUES.DOWN || state.prevMoveDirection === DIRECTION_VALUES.UP) {
         return;
       }
       state.direction = DIRECTION_VALUES.DOWN;
     },
     left: (state) => {
-      if (state.direction === DIRECTION_VALUES.LEFT || state.direction === DIRECTION_VALUES.RIGHT) {
+      if (state.prevMoveDirection === DIRECTION_VALUES.LEFT || state.prevMoveDirection === DIRECTION_VALUES.RIGHT) {
         return;
       }
       state.direction = DIRECTION_VALUES.LEFT;
     },
+    setPrevMoveDirection: (state, action: PayloadAction<TDirection>) => {
+      state.prevMoveDirection = action.payload;
+    },
   },
 });
 
-export const { start, setIntervalID, stop, toggleGame, setField, setSnake, setApple, move, up, right, down, left } =
-  gameSlice.actions;
+export const {
+  start,
+  setIntervalID,
+  stop,
+  toggleGame,
+  setField,
+  setSnake,
+  setApple,
+  move,
+  up,
+  right,
+  down,
+  left,
+  setPrevMoveDirection,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

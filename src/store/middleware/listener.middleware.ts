@@ -8,7 +8,17 @@ import { IField } from '../../models/field.interface';
 import { ISnake, ISnakeSegment } from '../../models/snake.interface';
 import { getField, getNewApple } from '../../shared/utils';
 import { FIELD_SIZE, GAME_SPEED } from '../../shared/variables';
-import { move, setApple, setField, setIntervalID, setSnake, start, stop, toggleGame } from '../gameSlice';
+import {
+  move,
+  setApple,
+  setField,
+  setIntervalID,
+  setPrevMoveDirection,
+  setSnake,
+  start,
+  stop,
+  toggleGame,
+} from '../gameSlice';
 import { IAppleSquare } from '../../models/apple.interface';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -74,6 +84,8 @@ startAppListening({
         headX = snakeHead.x - 1 < 0 ? FIELD_SIZE - 1 : snakeHead.x - 1;
         break;
     }
+
+    listenerApi.dispatch(setPrevMoveDirection(direction));
 
     const isAppleEaten: boolean = headX === apple.x && headY === apple.y;
 
