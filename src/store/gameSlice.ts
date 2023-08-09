@@ -1,20 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DIRECTION_VALUES, TDirection } from '../models/directions';
-import { Snake, SnakeModel } from '../models/snake.model';
-import { AppleSquareModel, FieldModel, SQUARE_VALUES } from '../models/field.model';
-import { getField } from '../shared/utils';
-import { FIELD_SIZE } from '../shared/variables';
+import { ISnake } from '../models/snake.interface';
+import { IField } from '../models/field.interface';
+import { getField, initSnakeBody } from '../shared/utils';
+import { FIELD_SIZE, SQUARE_VALUES } from '../shared/variables';
+import { IAppleSquare } from '../models/apple.interface';
 
 export interface GameSliceState {
   intervalID: number | null;
   direction: TDirection;
-  snake: SnakeModel;
-  apple: AppleSquareModel;
-  field: FieldModel;
+  snake: ISnake;
+  apple: IAppleSquare;
+  field: IField;
 }
 
-const INITIAL_SNAKE = new Snake();
-const INITIAL_APPLE: AppleSquareModel = {
+const INITIAL_SNAKE: ISnake = {
+  body: initSnakeBody(),
+  segmentsToGrow: 0,
+};
+const INITIAL_APPLE: IAppleSquare = {
   x: FIELD_SIZE - 2,
   y: FIELD_SIZE - 2,
   value: SQUARE_VALUES.APPLE,
@@ -45,11 +49,14 @@ export const gameSlice = createSlice({
       state.intervalID = null;
     },
     toggleGame: () => {},
-    setField: (state, action: PayloadAction<FieldModel>) => {
+    setField: (state, action: PayloadAction<IField>) => {
       state.field = action.payload;
     },
-    setSnake: (state, action: PayloadAction<SnakeModel>) => {
+    setSnake: (state, action: PayloadAction<ISnake>) => {
       state.snake = action.payload;
+    },
+    setApple: (state, action: PayloadAction<IAppleSquare>) => {
+      state.apple = action.payload;
     },
     move: () => {},
     up: (state) => {
@@ -79,7 +86,7 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { start, setIntervalID, stop, toggleGame, setField, setSnake, move, up, right, down, left } =
+export const { start, setIntervalID, stop, toggleGame, setField, setSnake, setApple, move, up, right, down, left } =
   gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import { SquareModel } from '../../models/field.model';
+import { ISquare } from '../../models/field.interface';
 import './square.component.scss';
 
 type SquareComponentProps = {
-  square: SquareModel;
+  square: ISquare;
 };
 
 export const SquareComponent: FC<SquareComponentProps> = ({ square }: SquareComponentProps) => {

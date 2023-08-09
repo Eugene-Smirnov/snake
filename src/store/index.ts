@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 import gameReducer from '../store/gameSlice';
 import { useDispatch } from 'react-redux';
 import { listenerMiddleware } from './middleware/listener.middleware';

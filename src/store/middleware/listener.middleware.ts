@@ -4,11 +4,12 @@ import type { TypedStartListening, TypedAddListener } from '@reduxjs/toolkit';
 import type { RootState, AppDispatch } from '../index';
 
 import { DIRECTION_VALUES } from '../../models/directions';
-import { FieldModel } from '../../models/field.model';
-import { Snake, SnakeModel, SnakeSegment } from '../../models/snake.model';
-import { getField } from '../../shared/utils';
+import { IField } from '../../models/field.interface';
+import { ISnake, ISnakeSegment } from '../../models/snake.interface';
+import { getField, getNewApple } from '../../shared/utils';
 import { FIELD_SIZE, GAME_SPEED } from '../../shared/variables';
-import { move, setField, setIntervalID, setSnake, start, stop, toggleGame } from '../gameSlice';
+import { move, setApple, setField, setIntervalID, setSnake, start, stop, toggleGame } from '../gameSlice';
+import { IAppleSquare } from '../../models/apple.interface';
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -49,17 +50,13 @@ startAppListening({
   actionCreator: move,
   effect: (action, listenerApi): void => {
     const {
-      game: {
-        snake: { body: snakeBody, segmentsToGrow },
-        direction,
-        apple,
-      },
+      game: { snake, direction, apple },
     } = listenerApi.getState();
 
-    const snakeBodyAfterMove: SnakeSegment[] = [...snakeBody];
-    let segmentstoGrowAfterMove: number = segmentsToGrow;
-    const snakeLength: number = snakeBody.length;
-    const snakeHead: SnakeSegment = snakeBody[snakeLength - 1];
+    const snakeBodyAfterMove: ISnakeSegment[] = [...snake.body];
+    let segmentstoGrowAfterMove: number = snake.segmentsToGrow;
+    const snakeLength: number = snake.body.length;
+    const snakeHead: ISnakeSegment = snake.body[snakeLength - 1];
     let headX: number = snakeHead.x;
     let headY: number = snakeHead.y;
 
@@ -78,19 +75,35 @@ startAppListening({
         break;
     }
 
-    if (segmentsToGrow > 0) {
-      segmentstoGrowAfterMove = segmentsToGrow - 1;
+    const isAppleEaten: boolean = headX === apple.x && headY === apple.y;
+
+    if (isAppleEaten) {
+      segmentstoGrowAfterMove = snake.segmentsToGrow + 2;
+    }
+
+    if (snake.segmentsToGrow > 0) {
+      segmentstoGrowAfterMove = snake.segmentsToGrow - 1;
     } else {
       snakeBodyAfterMove.shift();
     }
 
     snakeBodyAfterMove.push({ x: headX, y: headY });
-
-    const snakeAfterMove: SnakeModel = new Snake(snakeBodyAfterMove, segmentstoGrowAfterMove);
-
-    const field: FieldModel = getField(snakeAfterMove.body, apple);
-
+    const snakeAfterMove: ISnake = { ...snake, body: snakeBodyAfterMove, segmentsToGrow: segmentstoGrowAfterMove };
     listenerApi.dispatch(setSnake(snakeAfterMove));
+
+    let newApple: IAppleSquare = apple;
+
+    if (isAppleEaten) {
+      newApple = getNewApple(snakeAfterMove.body);
+      listenerApi.dispatch(setApple(newApple));
+    }
+
+    const field: IField = getField(snakeAfterMove.body, newApple);
     listenerApi.dispatch(setField(field));
+
+    // Game end
+    if (snakeAfterMove.body.length + segmentstoGrowAfterMove === FIELD_SIZE ** 2 - 1) {
+      listenerApi.dispatch(stop());
+    }
   },
 });
