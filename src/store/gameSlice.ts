@@ -24,15 +24,17 @@ const INITIAL_APPLE: IAppleSquare = {
   y: FIELD_SIZE - 2,
   value: SQUARE_VALUES.APPLE,
 };
-const INITIAL_FIELD = getField(INITIAL_SNAKE.body, INITIAL_APPLE);
 
 const GAME_INITIAL_STATE: GameSliceState = {
   intervalID: null,
   direction: DIRECTION_VALUES.RIGHT,
   prevMoveDirection: DIRECTION_VALUES.RIGHT,
-  snake: INITIAL_SNAKE,
-  apple: INITIAL_APPLE,
-  field: INITIAL_FIELD,
+  snake: {
+    body: [...INITIAL_SNAKE.body],
+    segmentsToGrow: INITIAL_SNAKE.segmentsToGrow,
+  },
+  apple: { ...INITIAL_APPLE },
+  field: [...getField(initSnakeBody(), { ...INITIAL_APPLE })],
 };
 
 export const gameSlice = createSlice({
@@ -51,6 +53,17 @@ export const gameSlice = createSlice({
       state.intervalID = null;
     },
     toggleGame: () => {},
+    restart: (state) => {
+      state.intervalID = null;
+      state.snake = {
+        body: [...INITIAL_SNAKE.body],
+        segmentsToGrow: INITIAL_SNAKE.segmentsToGrow,
+      };
+      state.direction = DIRECTION_VALUES.RIGHT;
+      state.prevMoveDirection = DIRECTION_VALUES.RIGHT;
+      state.apple = { ...INITIAL_APPLE };
+      state.field = [...getField(initSnakeBody(), INITIAL_APPLE)];
+    },
     setField: (state, action: PayloadAction<IField>) => {
       state.field = action.payload;
     },
@@ -96,6 +109,7 @@ export const {
   setIntervalID,
   stop,
   toggleGame,
+  restart,
   setField,
   setSnake,
   setApple,

@@ -7,9 +7,10 @@ import { DIRECTION_VALUES } from '../../models/directions';
 import { IField } from '../../models/field.interface';
 import { ISnake, ISnakeSegment } from '../../models/snake.interface';
 import { getField, getNewApple } from '../../shared/utils';
-import { FIELD_SIZE, GAME_SPEED } from '../../shared/variables';
+import { FIELD_SIZE, GAME_SPEED, SQUARE_VALUES } from '../../shared/variables';
 import {
   move,
+  restart,
   setApple,
   setField,
   setIntervalID,
@@ -60,9 +61,10 @@ startAppListening({
   actionCreator: move,
   effect: (action, listenerApi): void => {
     const {
-      game: { snake, direction, apple },
+      game: { field, snake, direction, apple },
     } = listenerApi.getState();
 
+    listenerApi.dispatch(setPrevMoveDirection(direction));
     const snakeBodyAfterMove: ISnakeSegment[] = [...snake.body];
     let segmentstoGrowAfterMove: number = snake.segmentsToGrow;
     const snakeLength: number = snake.body.length;
@@ -85,7 +87,11 @@ startAppListening({
         break;
     }
 
-    listenerApi.dispatch(setPrevMoveDirection(direction));
+    if (field[headY][headX].value === SQUARE_VALUES.SNAKE) {
+      listenerApi.dispatch(stop());
+      listenerApi.dispatch(restart());
+      return;
+    }
 
     const isAppleEaten: boolean = headX === apple.x && headY === apple.y;
 
@@ -110,10 +116,10 @@ startAppListening({
       listenerApi.dispatch(setApple(newApple));
     }
 
-    const field: IField = getField(snakeAfterMove.body, newApple);
-    listenerApi.dispatch(setField(field));
+    const updatedField: IField = getField(snakeAfterMove.body, newApple);
+    listenerApi.dispatch(setField(updatedField));
 
-    // Game end
+    // Game success
     if (snakeAfterMove.body.length + segmentstoGrowAfterMove === FIELD_SIZE ** 2 - 1) {
       listenerApi.dispatch(stop());
     }
