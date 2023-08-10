@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { RowModel } from '../../models/field.model';
 import { SquareComponent } from '../square/square.component';
 import './row.component.scss';
+import { IRow } from '../../models/field.interface';
 
 type RowComponentProps = {
-  row: RowModel;
+  row: IRow;
 };
 
 export const RowComponent: FC<RowComponentProps> = ({ row }: RowComponentProps) => {

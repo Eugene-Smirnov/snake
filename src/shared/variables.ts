@@ -1,4 +1,4 @@
-export const GAME_SPEED = 500;
+export const GAME_SPEED = 200;
 export const FIELD_SIZE = 20;
 export const SNAKE_LENGTH = 5;
 
