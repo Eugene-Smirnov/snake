@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { SquareComponent } from '../square/square.component';
 import './row.component.scss';
 import { IRow } from '../../models/field.interface';
@@ -7,7 +7,7 @@ type RowComponentProps = {
   row: IRow;
 };
 
-export const RowComponent: FC<RowComponentProps> = ({ row }: RowComponentProps) => {
+export const RowComponent: FC<RowComponentProps> = memo(({ row }: RowComponentProps) => {
   return (
     <div className="row">
       {row.map((square, id) => {
@@ -15,4 +15,4 @@ export const RowComponent: FC<RowComponentProps> = ({ row }: RowComponentProps) 
       })}
     </div>
   );
-};
+});

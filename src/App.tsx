@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import './App.scss';
 import { FieldComponent } from './components/field/field.component';
 import eventsToActionsService from './services/events-to-action.service';
@@ -9,21 +9,26 @@ const KEYDOWN_GLOBAL_LISTENER_KEY = 'evs-snake-keydown-listener';
 function App() {
   const dispatch = useAppDispatch();
 
-  function keyDownHandler(this: Document, event: KeyboardEvent): void {
-    const action = eventsToActionsService.getKeyPressAction(event.code);
-    if (action) {
-      dispatch(action());
+  const keyDownHandler = useCallback(
+    (event: KeyboardEvent): void => {
+      const action = eventsToActionsService.getKeyPressAction(event.code);
+      if (action) {
+        dispatch(action());
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    const isKeydownListenerRegistered: boolean =
+      window.localStorage.getItem(KEYDOWN_GLOBAL_LISTENER_KEY) === JSON.stringify(keyDownHandler);
+
+    if (!isKeydownListenerRegistered) {
+      window.localStorage.removeItem(KEYDOWN_GLOBAL_LISTENER_KEY);
+      document.addEventListener('keydown', keyDownHandler);
+      window.localStorage.setItem(KEYDOWN_GLOBAL_LISTENER_KEY, JSON.stringify(keyDownHandler));
     }
-  }
-
-  const isKeydownListenerRegistered: boolean =
-    window.localStorage.getItem(KEYDOWN_GLOBAL_LISTENER_KEY) === JSON.stringify(keyDownHandler);
-
-  if (!isKeydownListenerRegistered) {
-    window.localStorage.removeItem(KEYDOWN_GLOBAL_LISTENER_KEY);
-    document.addEventListener('keydown', keyDownHandler);
-    window.localStorage.setItem(KEYDOWN_GLOBAL_LISTENER_KEY, JSON.stringify(keyDownHandler));
-  }
+  }, [keyDownHandler]);
 
   return (
     <div className="App">

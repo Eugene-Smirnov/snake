@@ -42,11 +42,8 @@ export function getNewApple(snakeBody: ISnakeSegment[]): IAppleSquare {
   let appleX: number = generateRandomNumber(FIELD_SIZE);
   let appleY: number = generateRandomNumber(FIELD_SIZE);
 
-  while (snakeBody.some(({ x: snakeX }) => snakeX === appleX)) {
+  while (snakeBody.some(({ x: snakeX, y: snakeY }) => snakeX === appleX && snakeY === appleY)) {
     appleX = generateRandomNumber(FIELD_SIZE);
-  }
-
-  while (snakeBody.some(({ y: snakeY }) => snakeY === appleY)) {
     appleY = generateRandomNumber(FIELD_SIZE);
   }
 
