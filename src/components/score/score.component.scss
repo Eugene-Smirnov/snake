@@ -1,0 +1,15 @@
+.score-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.score {
+  margin: 0 0 1rem 0;
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-height: 768px) {
+    margin: 0.6rem 0;
+  }
+}
+

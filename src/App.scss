@@ -1,0 +1,23 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h2 {
+    font-weight: 400;
+  }
+
+  @media (max-height: 768px) {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
