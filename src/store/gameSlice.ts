@@ -5,28 +5,34 @@ import { IField } from '../models/field.interface';
 import { getField, initSnakeBody } from '../shared/utils';
 import { FIELD_SIZE, SQUARE_VALUES } from '../shared/variables';
 import { IAppleSquare } from '../models/apple.interface';
+import scoreService from '../services/score.service';
 
 export interface GameSliceState {
-  intervalID: number | null;
+  intervalId: number | null;
   direction: TDirection;
   prevMoveDirection: TDirection;
   snake: ISnake;
   apple: IAppleSquare;
   field: IField;
+  score: number;
+  bestScore: number;
 }
 
 const INITIAL_SNAKE: ISnake = {
   body: initSnakeBody(),
   segmentsToGrow: 0,
 };
+
 const INITIAL_APPLE: IAppleSquare = {
   x: FIELD_SIZE - 2,
   y: FIELD_SIZE - 2,
   value: SQUARE_VALUES.APPLE,
 };
 
+const SCORE_STEP = 100;
+
 const GAME_INITIAL_STATE: GameSliceState = {
-  intervalID: null,
+  intervalId: null,
   direction: DIRECTION_VALUES.RIGHT,
   prevMoveDirection: DIRECTION_VALUES.RIGHT,
   snake: {
@@ -35,6 +41,8 @@ const GAME_INITIAL_STATE: GameSliceState = {
   },
   apple: { ...INITIAL_APPLE },
   field: [...getField(initSnakeBody(), { ...INITIAL_APPLE })],
+  score: 0,
+  bestScore: scoreService.getBestPreviousScore(),
 };
 
 export const gameSlice = createSlice({
@@ -42,19 +50,19 @@ export const gameSlice = createSlice({
   initialState: GAME_INITIAL_STATE,
   reducers: {
     start: () => {},
-    setIntervalID: (state, action: PayloadAction<number | null>) => {
-      state.intervalID = action.payload;
+    setIntervalId: (state, action: PayloadAction<number | null>) => {
+      state.intervalId = action.payload;
     },
     stop: (state) => {
-      if (state.intervalID) {
-        window.clearInterval(state.intervalID);
+      if (state.intervalId) {
+        window.clearInterval(state.intervalId);
       }
 
-      state.intervalID = null;
+      state.intervalId = null;
     },
     toggleGame: () => {},
     restart: (state) => {
-      state.intervalID = null;
+      state.intervalId = null;
       state.snake = {
         body: [...INITIAL_SNAKE.body],
         segmentsToGrow: INITIAL_SNAKE.segmentsToGrow,
@@ -63,6 +71,8 @@ export const gameSlice = createSlice({
       state.prevMoveDirection = DIRECTION_VALUES.RIGHT;
       state.apple = { ...INITIAL_APPLE };
       state.field = [...getField(initSnakeBody(), INITIAL_APPLE)];
+      state.score = 0;
+      state.bestScore = scoreService.getBestPreviousScore();
     },
     setField: (state, action: PayloadAction<IField>) => {
       state.field = action.payload;
@@ -101,12 +111,18 @@ export const gameSlice = createSlice({
     setPrevMoveDirection: (state, action: PayloadAction<TDirection>) => {
       state.prevMoveDirection = action.payload;
     },
+    increaseScore: (state) => {
+      state.score = state.score + SCORE_STEP;
+
+      scoreService.updateBestScore(state.score);
+      state.bestScore = scoreService.getBestPreviousScore();
+    },
   },
 });
 
 export const {
   start,
-  setIntervalID,
+  setIntervalId,
   stop,
   toggleGame,
   restart,
@@ -119,6 +135,7 @@ export const {
   down,
   left,
   setPrevMoveDirection,
+  increaseScore,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

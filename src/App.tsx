@@ -3,6 +3,7 @@ import './App.scss';
 import { FieldComponent } from './components/field/field.component';
 import eventsToActionsService from './services/events-to-action.service';
 import { useAppDispatch } from './store';
+import { ScoreComponent } from './components/score/score.component';
 
 const KEYDOWN_GLOBAL_LISTENER_KEY = 'evs-snake-keydown-listener';
 
@@ -34,8 +35,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h2>SNAKE</h2>
+        <ScoreComponent />
       </header>
-      <FieldComponent></FieldComponent>
+      <FieldComponent />
     </div>
   );
 }

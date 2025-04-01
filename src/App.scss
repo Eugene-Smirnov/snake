@@ -15,4 +15,9 @@
   h2 {
     font-weight: 400;
   }
+
+  @media (max-height: 768px) {
+    flex-direction: row;
+    gap: 1rem;
+  }
 }

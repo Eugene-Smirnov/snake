@@ -9,4 +9,4 @@ export const SQUARE_VALUES = {
 } as const;
 
 type SquareValuesKeys = keyof typeof SQUARE_VALUES;
-export type TSquareValues = typeof SQUARE_VALUES[SquareValuesKeys];
+export type TSquareValues = (typeof SQUARE_VALUES)[SquareValuesKeys];

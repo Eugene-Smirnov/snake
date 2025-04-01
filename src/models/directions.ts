@@ -6,4 +6,4 @@ export const DIRECTION_VALUES = {
 } as const;
 
 type directionValuesKeys = keyof typeof DIRECTION_VALUES;
-export type TDirection = typeof DIRECTION_VALUES[directionValuesKeys];
+export type TDirection = (typeof DIRECTION_VALUES)[directionValuesKeys];

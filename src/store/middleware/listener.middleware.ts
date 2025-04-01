@@ -9,11 +9,12 @@ import { ISnake, ISnakeSegment } from '../../models/snake.interface';
 import { getField, getNewApple } from '../../shared/utils';
 import { FIELD_SIZE, GAME_SPEED, SQUARE_VALUES } from '../../shared/variables';
 import {
+  increaseScore,
   move,
   restart,
   setApple,
   setField,
-  setIntervalID,
+  setIntervalId,
   setPrevMoveDirection,
   setSnake,
   start,
@@ -34,10 +35,10 @@ startAppListening({
   actionCreator: toggleGame,
   effect: (action, listenerApi): void => {
     const {
-      game: { intervalID },
+      game: { intervalId },
     } = listenerApi.getState();
 
-    if (intervalID) {
+    if (intervalId) {
       listenerApi.dispatch(stop());
       return;
     }
@@ -49,11 +50,11 @@ startAppListening({
 startAppListening({
   actionCreator: start,
   effect: (action, listenerApi): void => {
-    const intervalID: number = window.setInterval(() => {
+    const intervalId: number = window.setInterval(() => {
       listenerApi.dispatch(move());
     }, GAME_SPEED);
 
-    listenerApi.dispatch(setIntervalID(intervalID));
+    listenerApi.dispatch(setIntervalId(intervalId));
   },
 });
 
@@ -113,6 +114,7 @@ startAppListening({
 
     if (isAppleEaten) {
       newApple = getNewApple(snakeAfterMove.body);
+      listenerApi.dispatch(increaseScore());
       listenerApi.dispatch(setApple(newApple));
     }
 
